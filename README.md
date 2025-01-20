@@ -78,6 +78,11 @@ ALTER SCHEMA public OWNER TO admin;
 GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
 ```
 
+3. Run the Prisma migration command to create the database tables
+```bash
+npx prisma migrate dev --name init
+```
+
 ## Project Structure
 
 ```
