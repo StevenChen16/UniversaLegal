@@ -24,7 +24,10 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
+    signIn: "/auth",
+    error: "/auth/error",
+    signOut: "/auth/signout",
+    verifyRequest: "/auth/verify-request",
   },
   providers: [
     CredentialsProvider({
@@ -79,5 +82,13 @@ export const authOptions: NextAuthOptions = {
 
       return token
     },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`
+      } else if (new URL(url).origin === baseUrl) {
+        return url
+      }
+      return baseUrl
+    }
   },
 }

@@ -21,8 +21,12 @@ UniversaLegal is a revolutionary three-sided marketplace platform that bridges t
 - Intelligent case complexity assessment
 - Seamless referral to professional lawyers when needed
 - Monthly subscription model ($10/month)
+- Open Source Project:
+  - GitHub: [lawyer-llama3-8b](https://github.com/StevenChen16/lawyer-llama3-8b.git)
+  - Model: [llama3-8b-Lawyer on HuggingFace](https://huggingface.co/StevenChen16/llama3-8b-Lawyer)
+  - Demo: [AI-Lawyer Space](https://huggingface.co/spaces/StevenChen16/AI-Lawyer)
 
-### 📄 Smart Contract System
+### 📄 Smart Contract System (LexCraft)
 - **Basic Plan** ($30)
   - AI-powered template selection and population
   - Standardized contract templates
@@ -34,6 +38,9 @@ UniversaLegal is a revolutionary three-sided marketplace platform that bridges t
   - Ongoing assistance
   - Ideal for real estate transfers
   - 70/30 revenue split with legal firms
+
+- Open Source Project:
+  - GitHub: [LexCraft](https://github.com/StevenChen16/LexCraft)
 
 ## 🛠️ Technology Stack
 

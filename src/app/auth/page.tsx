@@ -21,10 +21,13 @@ export default function AuthPage() {
         redirect: false,
         email,
         password,
+        callbackUrl: '/',
+        basePath: '/'
       })
 
       if (result?.error) {
-        setError('Invalid credentials')
+        setError(result.error || 'Invalid credentials')
+        console.error('Login error:', result)
         return
       }
 
@@ -49,6 +52,8 @@ export default function AuthPage() {
             redirect: false,
             email,
             password,
+            callbackUrl: '/',
+            basePath: '/'
           })
           router.push('/')
         } else {
@@ -62,7 +67,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div suppressHydrationWarning={true} className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
