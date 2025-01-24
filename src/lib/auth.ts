@@ -20,11 +20,15 @@ declare module "next-auth/jwt" {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  basePath: "/universalegal",
   session: {
     strategy: "jwt",
   },
   pages: {
     signIn: "/universalegal/login",
+    error: "/universalegal/auth/error",
+    signOut: "/universalegal/auth/signout",
+    verifyRequest: "/universalegal/auth/verify-request",
   },
   providers: [
     CredentialsProvider({
@@ -79,5 +83,13 @@ export const authOptions: NextAuthOptions = {
 
       return token
     },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`
+      } else if (new URL(url).origin === baseUrl) {
+        return url
+      }
+      return baseUrl
+    }
   },
 }
