@@ -57,9 +57,10 @@ export default function DashboardLayout({
             <Link
               href="/dashboard/documents"
               className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              title="Smart Contract System"
             >
               <FileText className="h-5 w-5" />
-              <span>Documents</span>
+              <span>LexCraft</span>
             </Link>
             <Link
               href="/dashboard/settings"
@@ -76,7 +77,7 @@ export default function DashboardLayout({
       <div
         className={`${
           isSidebarOpen ? 'md:pl-60' : ''
-        } min-h-screen`}
+        } min-h-screen flex flex-col`}
       >
         {/* Top bar */}
         <div className="bg-white shadow">
@@ -96,7 +97,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Content area */}
-        <main className="p-6">
+        <main className="flex-1 relative">
           {children}
         </main>
       </div>
