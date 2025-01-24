@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
+import { useSession } from "next-auth/react"
 
 export default function ProfileSettings() {
+  const { data: session, update } = useSession()
   const [isPending, setIsPending] = useState(false)
   const [profileData, setProfileData] = useState({
-    name: "",
-    email: "",
+    name: session?.user?.name || "",
+    email: session?.user?.email || "",
     language: "en",
     timezone: "utc",
   })
@@ -21,14 +23,45 @@ export default function ProfileSettings() {
     event.preventDefault()
     setIsPending(true)
 
-    // TODO: Implement profile update logic
+    try {
+      const response = await fetch("/api/settings/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profileData),
+      })
 
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been updated successfully.",
-    })
+      if (!response.ok) {
+        throw new Error("Failed to update profile")
+      }
 
-    setIsPending(false)
+      const updatedUser = await response.json()
+      
+      // Update the session with new user data
+      await update({
+        ...session,
+        user: {
+          ...session?.user,
+          name: updatedUser.name,
+          email: updatedUser.email,
+        },
+      })
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      })
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (

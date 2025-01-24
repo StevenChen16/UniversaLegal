@@ -1,32 +1,82 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
+import { useSession } from "next-auth/react"
 
 export default function AppearanceSettings() {
+  const { data: session } = useSession()
   const [isPending, setIsPending] = useState(false)
   const [appearance, setAppearance] = useState({
     theme: "system",
     fontSize: "normal",
   })
 
+  useEffect(() => {
+    async function loadAppearanceSettings() {
+      try {
+        const response = await fetch("/api/settings/appearance")
+        if (response.ok) {
+          const data = await response.json()
+          setAppearance({
+            theme: data.theme || "system",
+            fontSize: data.fontSize || "normal",
+          })
+        }
+      } catch (error) {
+        console.error("Failed to load appearance settings:", error)
+      }
+    }
+
+    if (session?.user?.email) {
+      loadAppearanceSettings()
+    }
+  }, [session?.user?.email])
+
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     setIsPending(true)
 
-    // TODO: Implement appearance settings update logic
+    try {
+      const response = await fetch("/api/settings/appearance", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(appearance),
+      })
 
-    toast({
-      title: "Appearance updated",
-      description: "Your appearance settings have been updated successfully.",
-    })
+      if (!response.ok) {
+        throw new Error("Failed to update appearance settings")
+      }
 
-    setIsPending(false)
+      toast({
+        title: "Appearance updated",
+        description: "Your appearance settings have been updated successfully.",
+      })
+
+      // Apply theme changes immediately
+      document.documentElement.setAttribute("data-theme", appearance.theme)
+      document.documentElement.style.fontSize = {
+        small: "14px",
+        normal: "16px",
+        large: "18px",
+      }[appearance.fontSize]
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "Failed to update appearance settings. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (

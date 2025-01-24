@@ -1,104 +1,151 @@
 # UniversaLegal
 
-UniversaLegal is an AI-powered legal service platform that makes legal assistance accessible and affordable. The platform connects users with AI legal consultation services and professional lawyers.
+<div align="center">
+  <img src="src/app/favicon.ico" alt="UniversaLegal Logo" width="200"/>
+  <p><em>Democratizing Legal Services through AI and Professional Expertise</em></p>
+</div>
 
-## Features
+## 🌟 Overview
 
-- 🤖 AI Legal Assistant powered by advanced language models
-- 🔐 Secure user authentication system
-- 💼 Professional legal consultation interface
-- 🌐 Modern, responsive web design
+UniversaLegal is a revolutionary three-sided marketplace platform that bridges the gap between legal service accessibility and professional support. By connecting consumers, legal firms, and AI technology providers, we're creating a win-win-win ecosystem where:
 
-## Tech Stack
+- 👥 **Consumers** get affordable, efficient legal services
+- ⚖️ **Law Firms** expand their digital presence and monetize data
+- 🤖 **AI Partners** gain valuable data while growing equity value
 
-- **Framework:** Next.js 13+ with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Authentication:** NextAuth.js
-- **Database:** PostgreSQL with Prisma ORM
-- **AI Integration:** Custom-trained legal AI model via Hugging Face
+## ✨ Core Products
 
-## Getting Started
+### 🤖 AI Legal ChatBox
+- Real-time legal consultation with natural conversation
+- 30-minute free trial for new users
+- Intelligent case complexity assessment
+- Seamless referral to professional lawyers when needed
+- Monthly subscription model ($10/month)
+
+### 📄 Smart Contract System
+- **Basic Plan** ($30)
+  - AI-powered template selection and population
+  - Standardized contract templates
+  - Guaranteed fairness protection
+  - Perfect for rental agreements
+
+- **Premium Plan** ($888)
+  - Professional legal support
+  - Ongoing assistance
+  - Ideal for real estate transfers
+  - 70/30 revenue split with legal firms
+
+## 🛠️ Technology Stack
+
+- **Frontend**
+  - Next.js 15.1.5 (React 19)
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui + Radix UI components
+
+- **Backend**
+  - Next.js App Router
+  - Prisma ORM
+  - PostgreSQL
+  - NextAuth.js for authentication
+
+- **AI Integration**
+  - Template-based contract system
+  - Natural language processing
+  - Intelligent template selection
+  - Data-driven improvements
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL
+- PostgreSQL 14+
 - npm or yarn
+- Git
 
-### Installation
+### Installation Steps
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/universalegal.git
-cd universalegal
-```
+1. Clone the Repository
+   ```bash
+   git clone https://github.com/StevenChen16/UniversaLegal.git
+   cd universalegal
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+2. Install Dependencies
+   ```bash
+   npm install
+   ```
 
-3. Copy the example environment file:
-```bash
-cp .env.example .env
-```
+3. Environment Setup
+   ```bash
+   cp .env.example .env
+   ```
+   Generate a secure secret key:
+   ```bash
+   openssl rand -base64 32
+   ```
+   Configure the following variables in `.env`:
+   ```env
+   DATABASE_URL="postgresql://user:password@localhost:5432/universalegal"
+   NEXTAUTH_SECRET="your-generated-secret-key"    # Paste the generated key here
+   NEXTAUTH_URL="http://localhost:8050"
+   ```
 
-4. Configure your environment variables in `.env`:
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/dbname?schema=public"
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-```
+4. Database Setup
+   ```bash
+   # Create database and run migrations
+   npx prisma migrate dev
+   
+   # Seed initial data (if available)
+   npx prisma db seed
+   ```
 
-5. Set up the database:
-```bash
-npx prisma migrate dev
-```
+5. Start Development Server
+   ```bash
+   npm run dev
+   ```
+   Access the application at `http://localhost:8050`
 
-6. Start the development server:
-```bash
-npm run dev
-```
-
-## Database Setup
-
-1. Create PostgreSQL database and user:
-```sql
-CREATE USER admin WITH PASSWORD '123456';
-CREATE DATABASE universalegal;
-ALTER DATABASE universalegal OWNER TO admin;
-```
-
-2. Configure permissions:
-```sql
-\c universalegal
-CREATE SCHEMA IF NOT EXISTS public;
-ALTER SCHEMA public OWNER TO admin;
-GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
-```
-
-3. Run the Prisma migration command to create the database tables
-```bash
-npx prisma migrate dev --name init
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 universalegal/
-├── src/                    # Source code
-│   ├── app/               # App router pages
-│   ├── components/        # React components
-│   └── lib/              # Utility functions
-├── prisma/                # Database schema and migrations
-└── public/               # Static assets
+├── src/
+│   ├── app/              # Next.js app router pages
+│   ├── components/       # Reusable React components
+│   │   ├── landing/     # Landing page components
+│   │   ├── settings/    # User settings components
+│   │   └── ui/          # UI components
+│   └── lib/             # Utility functions and configs
+├── prisma/              # Database schema and migrations
+├── public/              # Static assets
+└── tests/              # Test files
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Please follow these steps:
 
-## License
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support and queries:
+- Create an issue in the [GitHub repository](https://github.com/stevenchen16/universalegal/issues)
+- Contact us at [i@stevenchen.site](mailto:i@stevenchen.site)
+- Visit our [documentation](https://bosseconbizchamps.org)
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by the Steven Chen</p>
+</div>

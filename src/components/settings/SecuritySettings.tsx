@@ -1,60 +1,122 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
+import { useSession } from "next-auth/react"
 
 export default function SecuritySettings() {
+  const { data: session } = useSession()
   const [isPending, setIsPending] = useState(false)
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
   const [passwords, setPasswords] = useState({
     current: "",
     new: "",
     confirm: "",
   })
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
+
+  useEffect(() => {
+    async function loadSecuritySettings() {
+      try {
+        const response = await fetch("/api/settings/security")
+        if (response.ok) {
+          const data = await response.json()
+          setTwoFactorEnabled(data.twoFactorEnabled)
+        }
+      } catch (error) {
+        console.error("Failed to load security settings:", error)
+      }
+    }
+
+    if (session?.user?.email) {
+      loadSecuritySettings()
+    }
+  }, [session?.user?.email])
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     setIsPending(true)
 
-    if (passwords.new !== passwords.confirm) {
+    try {
+      // Validate passwords if changing password
+      if (passwords.new || passwords.confirm || passwords.current) {
+        if (passwords.new !== passwords.confirm) {
+          toast({
+            title: "Error",
+            description: "New passwords do not match.",
+            variant: "destructive",
+          })
+          setIsPending(false)
+          return
+        }
+
+        if (!passwords.current) {
+          toast({
+            title: "Error",
+            description: "Please enter your current password.",
+            variant: "destructive",
+          })
+          setIsPending(false)
+          return
+        }
+      }
+
+      const response = await fetch("/api/settings/security", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: passwords.current || undefined,
+          newPassword: passwords.new || undefined,
+          twoFactorEnabled,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.text()
+        throw new Error(error || "Failed to update security settings")
+      }
+
+      // Clear password fields after successful update
+      if (passwords.new) {
+        setPasswords({ current: "", new: "", confirm: "" })
+      }
+
+      toast({
+        title: "Security settings updated",
+        description: "Your security settings have been updated successfully.",
+      })
+    } catch (error) {
+      console.error(error)
       toast({
         title: "Error",
-        description: "New passwords do not match.",
+        description: error instanceof Error ? error.message : "Failed to update security settings. Please try again.",
         variant: "destructive",
       })
+    } finally {
       setIsPending(false)
-      return
     }
-
-    // TODO: Implement password update logic
-
-    toast({
-      title: "Password updated",
-      description: "Your password has been updated successfully.",
-    })
-
-    setIsPending(false)
-    setPasswords({ current: "", new: "", confirm: "" })
   }
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={onSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>Password</CardTitle>
+          <CardTitle>Security</CardTitle>
           <CardDescription>
-            Change your password here. After saving, you'll be logged out.
+            Update your password and manage two-factor authentication.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={onSubmit}>
-          <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Change Password</h3>
             <div className="space-y-2">
-              <Label htmlFor="current">Current password</Label>
+              <Label htmlFor="current">Current Password</Label>
               <Input
                 id="current"
                 type="password"
@@ -65,7 +127,7 @@ export default function SecuritySettings() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="new">New password</Label>
+              <Label htmlFor="new">New Password</Label>
               <Input
                 id="new"
                 type="password"
@@ -76,7 +138,7 @@ export default function SecuritySettings() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm">Confirm password</Label>
+              <Label htmlFor="confirm">Confirm New Password</Label>
               <Input
                 id="confirm"
                 type="password"
@@ -86,49 +148,30 @@ export default function SecuritySettings() {
                 }
               />
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Updating..." : "Update password"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Two-factor Authentication</CardTitle>
-          <CardDescription>
-            Add an extra layer of security to your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between space-x-2">
-            <Label htmlFor="2fa" className="flex flex-col space-y-1">
-              <span>Two-factor authentication</span>
-              <span className="text-sm text-muted-foreground">
-                Secure your account with 2FA.
-              </span>
-            </Label>
-            <Switch
-              id="2fa"
-              checked={twoFactorEnabled}
-              onCheckedChange={setTwoFactorEnabled}
-            />
           </div>
-          {twoFactorEnabled && (
-            <div className="rounded-lg border p-4">
-              <h4 className="text-sm font-medium">
-                Two factor authentication is enabled
-              </h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                When signing in, you'll need to provide a code from your
-                authenticator app.
-              </p>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Two-Factor Authentication</h3>
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="2fa" className="flex flex-col space-y-1">
+                <span>Enable Two-Factor Authentication</span>
+                <span className="text-sm text-muted-foreground">
+                  Add an extra layer of security to your account.
+                </span>
+              </Label>
+              <Switch
+                id="2fa"
+                checked={twoFactorEnabled}
+                onCheckedChange={setTwoFactorEnabled}
+              />
             </div>
-          )}
+          </div>
         </CardContent>
+        <CardFooter>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Saving..." : "Save changes"}
+          </Button>
+        </CardFooter>
       </Card>
-    </div>
+    </form>
   )
 }

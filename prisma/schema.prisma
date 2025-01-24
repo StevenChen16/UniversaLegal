@@ -27,19 +27,26 @@ model User {
 }
 
 model UserSettings {
-  id                String   @id @default(cuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  theme            String   @default("light")
-  language         String   @default("en")
-  timezone         String   @default("UTC")
-  emailNotifications Boolean @default(true)
-  systemNotifications Boolean @default(true)
-  twoFactorEnabled  Boolean @default(false)
-  twoFactorSecret   String?
-  profileVisibility String   @default("public")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Appearance settings
+  theme               String   @default("system")
+  fontSize            String   @default("normal")
+  // Profile settings
+  language            String   @default("en")
+  timezone            String   @default("UTC")
+  // Notification settings
+  emailEnabled        Boolean  @default(true)
+  pushEnabled         Boolean  @default(false)
+  messagesEnabled     Boolean  @default(true)
+  marketingEnabled    Boolean  @default(false)
+  // Security settings
+  twoFactorEnabled    Boolean  @default(false)
+  twoFactorSecret     String?
+  // Timestamps
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
 model Session {

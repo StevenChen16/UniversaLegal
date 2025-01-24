@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
+import { useSession } from "next-auth/react"
 
 export default function NotificationSettings() {
+  const { data: session } = useSession()
   const [isPending, setIsPending] = useState(false)
   const [notifications, setNotifications] = useState({
     email: true,
@@ -16,18 +18,65 @@ export default function NotificationSettings() {
     marketing: false,
   })
 
+  useEffect(() => {
+    async function loadNotificationSettings() {
+      try {
+        const response = await fetch("/api/settings/notifications")
+        if (response.ok) {
+          const data = await response.json()
+          setNotifications({
+            email: data.emailEnabled,
+            push: data.pushEnabled,
+            messages: data.messagesEnabled,
+            marketing: data.marketingEnabled,
+          })
+        }
+      } catch (error) {
+        console.error("Failed to load notification settings:", error)
+      }
+    }
+
+    if (session?.user?.email) {
+      loadNotificationSettings()
+    }
+  }, [session?.user?.email])
+
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     setIsPending(true)
 
-    // TODO: Implement notification settings update logic
+    try {
+      const response = await fetch("/api/settings/notifications", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: notifications.email,
+          push: notifications.push,
+          messages: notifications.messages,
+          marketing: notifications.marketing,
+        }),
+      })
 
-    toast({
-      title: "Notifications updated",
-      description: "Your notification preferences have been updated successfully.",
-    })
+      if (!response.ok) {
+        throw new Error("Failed to update notification settings")
+      }
 
-    setIsPending(false)
+      toast({
+        title: "Notifications updated",
+        description: "Your notification preferences have been updated successfully.",
+      })
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "Failed to update notification settings. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
