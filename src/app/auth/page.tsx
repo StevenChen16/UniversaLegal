@@ -28,11 +28,11 @@ export default function AuthPage() {
         return
       }
 
-      router.push('/')
+      router.push('/universalegal')
     } else {
       // Register
       try {
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch('/universalegal/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export default function AuthPage() {
             email,
             password,
           })
-          router.push('/')
+          router.push('/universalegal')
         } else {
           const data = await res.json()
           setError(data.error || 'Something went wrong')
@@ -62,7 +62,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div suppressHydrationWarning={true} className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
