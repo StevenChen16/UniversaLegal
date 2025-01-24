@@ -24,7 +24,21 @@ export async function PATCH(req: Request) {
       return new NextResponse("User not found", { status: 404 })
     }
 
-    let updateData: any = {
+    interface SecurityUpdateData {
+      settings: {
+        upsert: {
+          create: {
+            twoFactorEnabled: boolean;
+          };
+          update: {
+            twoFactorEnabled: boolean;
+          };
+        };
+      };
+      password?: string;
+    }
+
+    const updateData: SecurityUpdateData = {
       settings: {
         upsert: {
           create: {

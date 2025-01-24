@@ -8,7 +8,7 @@ export default function ContactSection() {
             Get in Touch
           </h2>
           <p className="mt-4 text-lg text-gray-500">
-            Have questions? We're here to help. Send us a message and we'll respond as soon as possible.
+            Have questions? We&apos;re here to help. Send us a message and we&apos;ll respond as soon as possible.
           </p>
         </div>
         <div className="mt-12">

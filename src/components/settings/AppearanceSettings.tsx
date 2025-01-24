@@ -62,11 +62,12 @@ export default function AppearanceSettings() {
 
       // Apply theme changes immediately
       document.documentElement.setAttribute("data-theme", appearance.theme)
-      document.documentElement.style.fontSize = {
+      const fontSizeMap = {
         small: "14px",
         normal: "16px",
         large: "18px",
-      }[appearance.fontSize]
+      } as const;
+      document.documentElement.style.fontSize = fontSizeMap[appearance.fontSize as keyof typeof fontSizeMap] || "16px";
     } catch (error) {
       console.error(error)
       toast({
