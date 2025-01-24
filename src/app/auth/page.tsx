@@ -21,18 +21,21 @@ export default function AuthPage() {
         redirect: false,
         email,
         password,
+        callbackUrl: '/',
+        basePath: '/'
       })
 
       if (result?.error) {
-        setError('Invalid credentials')
+        setError(result.error || 'Invalid credentials')
+        console.error('Login error:', result)
         return
       }
 
-      router.push('/universalegal')
+      router.push('/')
     } else {
       // Register
       try {
-        const res = await fetch('/universalegal/api/auth/register', {
+        const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -49,8 +52,10 @@ export default function AuthPage() {
             redirect: false,
             email,
             password,
+            callbackUrl: '/',
+            basePath: '/'
           })
-          router.push('/universalegal')
+          router.push('/')
         } else {
           const data = await res.json()
           setError(data.error || 'Something went wrong')
